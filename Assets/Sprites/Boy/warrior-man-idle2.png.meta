@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ef13df6c1da9d854888fe72207a38646
+guid: b2c7b1b73173fa6499a16fc955d90b50
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -136,106 +136,169 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: warrior-man-crouch_0
+      name: warrior-man-idle2_0
       rect:
         serializedVersion: 2
-        x: 26
-        y: 22
-        width: 26
-        height: 26
+        x: 25
+        y: 20
+        width: 27
+        height: 29
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cbc3ee9078b5d18468257312c483df9a
-      internalID: -1999898823
+      spriteID: 1ec2fe4d8de7afd40a2b1988e9a57347
+      internalID: -378687421
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: warrior-man-crouch_1
+      name: warrior-man-idle2_1
       rect:
         serializedVersion: 2
-        x: 103
-        y: 22
-        width: 29
-        height: 24
+        x: 105
+        y: 20
+        width: 27
+        height: 30
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: dd0d82875384dba498038ea7b43d785d
-      internalID: 277653850
+      spriteID: decedb39a03cb294c813df6f9980d891
+      internalID: 236653494
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: warrior-man-crouch_2
+      name: warrior-man-idle2_2
       rect:
         serializedVersion: 2
-        x: 183
-        y: 23
-        width: 29
-        height: 19
+        x: 185
+        y: 20
+        width: 27
+        height: 31
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 99462cc195c23054ab1b84cfc009387a
-      internalID: 617733330
+      spriteID: 6e137456df18b6e4fafe4c9fa19660c9
+      internalID: -920452830
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: warrior-man-crouch_3
+      name: warrior-man-idle2_3
       rect:
         serializedVersion: 2
-        x: 263
-        y: 22
-        width: 29
-        height: 24
+        x: 265
+        y: 20
+        width: 27
+        height: 31
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3fb200d2e36ec4d46ab5b4bb5047968d
-      internalID: 1429042642
+      spriteID: a0c1359dc56ecc74fa166637dcc6f7d2
+      internalID: 1328625048
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: warrior-man-crouch_4
+      name: warrior-man-idle2_4
       rect:
         serializedVersion: 2
-        x: 346
-        y: 22
-        width: 26
-        height: 26
+        x: 345
+        y: 20
+        width: 27
+        height: 30
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 07b2433a7e774ca478fb1c9664d50f8e
-      internalID: 735441978
+      spriteID: d5530b2077867654e995f5621ef2135d
+      internalID: 51399337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warrior-man-idle2_5
+      rect:
+        serializedVersion: 2
+        x: 425
+        y: 20
+        width: 27
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6eea9508734ac664ea2a0a088bf84035
+      internalID: 869041879
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warrior-man-idle2_6
+      rect:
+        serializedVersion: 2
+        x: 505
+        y: 20
+        width: 27
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2d01fd9deacda214391a02abc057d8e2
+      internalID: 1878925815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warrior-man-idle2_7
+      rect:
+        serializedVersion: 2
+        x: 585
+        y: 20
+        width: 27
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0a3e584d2c1c84d45a9efc0b90e418bd
+      internalID: 349056218
       vertices: []
       indices: 
       edges: []
@@ -251,11 +314,14 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      warrior-man-crouch_0: -1999898823
-      warrior-man-crouch_1: 277653850
-      warrior-man-crouch_2: 617733330
-      warrior-man-crouch_3: 1429042642
-      warrior-man-crouch_4: 735441978
+      warrior-man-idle2_0: -378687421
+      warrior-man-idle2_1: 236653494
+      warrior-man-idle2_2: -920452830
+      warrior-man-idle2_3: 1328625048
+      warrior-man-idle2_4: 51399337
+      warrior-man-idle2_5: 869041879
+      warrior-man-idle2_6: 1878925815
+      warrior-man-idle2_7: 349056218
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
