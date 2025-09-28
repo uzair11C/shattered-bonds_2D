@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -37,7 +35,6 @@ public class PlayerController : MonoBehaviour
         else if (Input.GetButtonUp("Crouch"))
         {
             isCrouching = false;
-            // animator.SetBool("IsCrouching", false);
         }
     }
 
