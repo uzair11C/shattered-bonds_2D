@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerCombat : MonoBehaviour
 {
@@ -17,35 +18,50 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField]
     private float attackRate = 2f;
 
+    private PlayerControls controls;
     private float nextAttackTime = 0f;
 
-    void Update()
+    void Awake()
     {
-        if (Time.time >= nextAttackTime)
-        {
-            if (Input.GetButtonDown("Melee"))
-            {
-                Attack();
-                nextAttackTime = Time.time + 1f / attackRate;
-            }
-        }
+        controls = new PlayerControls();
     }
 
-    void Attack()
+    void OnEnable()
     {
-        // Play attack animation
-        animator.SetTrigger("Attack");
+        controls.Enable();
+    }
 
-        // detect enemies in range
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(
-            attackPoint.position,
-            attackRange,
-            enemyLayers
-        );
-        // do damage
-        foreach (Collider2D enemy in hitEnemies)
+    void OnDisable()
+    {
+        controls.Disable();
+    }
+
+    void Update() { }
+
+    public void Attack(InputAction.CallbackContext context)
+    {
+        if (context.performed)
         {
-            Debug.Log("We hit " + enemy.name);
+            if (Time.time >= nextAttackTime)
+            {
+                Debug.Log("Melee Attack");
+                // Play attack animation
+                animator.SetTrigger("Attack");
+
+                // detect enemies in range
+                Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(
+                    attackPoint.position,
+                    attackRange,
+                    enemyLayers
+                );
+                // do damage
+                foreach (Collider2D enemy in hitEnemies)
+                {
+                    Debug.Log("We hit " + enemy.name);
+                }
+
+                nextAttackTime = Time.time + 1f / attackRate;
+            }
         }
     }
 
