@@ -16,10 +16,15 @@ public class PlayerCombat : MonoBehaviour
     private LayerMask enemyLayers;
 
     [SerializeField]
-    private float attackRate = 2f;
+    private float attackRate = 1f;
 
     private PlayerControls controls;
     private float nextAttackTime = 0f;
+    private int comboStep = 0; // 0 = idle, 1 = Attack1, 2 = Attack2, 3 = Attack3
+
+    private bool canCombo = false;
+    private int currentAttack = 0;
+    private bool isAttacking = false;
 
     void Awake()
     {
@@ -29,10 +34,12 @@ public class PlayerCombat : MonoBehaviour
     void OnEnable()
     {
         controls.Enable();
+        controls.Player.Attack.performed += Attack;
     }
 
     void OnDisable()
     {
+        controls.Player.Attack.performed -= Attack;
         controls.Disable();
     }
 
@@ -45,23 +52,44 @@ public class PlayerCombat : MonoBehaviour
             if (Time.time >= nextAttackTime)
             {
                 Debug.Log("Melee Attack");
-                // Play attack animation
-                animator.SetTrigger("Attack");
+                Debug.Log($"Combo Step: {comboStep}, Can Combo: {canCombo}");
 
-                // detect enemies in range
-                Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(
-                    attackPoint.position,
-                    attackRange,
-                    enemyLayers
-                );
-                // do damage
-                foreach (Collider2D enemy in hitEnemies)
+                if (comboStep == 0)
                 {
-                    Debug.Log("We hit " + enemy.name);
+                    // Start first attack
+                    Debug.Log("First Attack");
+                    comboStep = 1;
+                    animator.SetInteger("AttackIndex", comboStep);
+                    animator.SetTrigger("Attack");
+                    DoAttackHit();
+                }
+                else if (canCombo && comboStep < 3)
+                {
+                    // Queue next attack
+                    Debug.Log("Combo Attack");
+                    Debug.Log($"Current Combo Step: {comboStep}");
+                    comboStep++;
+                    animator.SetInteger("AttackIndex", comboStep);
+                    animator.SetTrigger("Attack");
+                    DoAttackHit();
+                    canCombo = false;
                 }
 
                 nextAttackTime = Time.time + 1f / attackRate;
             }
+        }
+    }
+
+    private void DoAttackHit()
+    {
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(
+            attackPoint.position,
+            attackRange,
+            enemyLayers
+        );
+        foreach (var enemy in hitEnemies)
+        {
+            Debug.Log($"Hit {enemy.name}");
         }
     }
 
@@ -71,5 +99,19 @@ public class PlayerCombat : MonoBehaviour
             return;
 
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    }
+
+    // --- Animation Event Functions ---
+    public void ComboWindow()
+    {
+        Debug.Log("Combo Window Opened");
+        canCombo = true;
+    }
+
+    public void EndCombo()
+    {
+        Debug.Log("Combo Ended");
+        canCombo = false;
+        comboStep = 0; // Reset after combo chain ends
     }
 }
