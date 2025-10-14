@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnCrouching(bool isCrouching)
     {
-        horizontalMove = 0f;
+        moveInput = Vector2.zero;
         animator.SetBool("IsCrouching", isCrouching);
     }
 }

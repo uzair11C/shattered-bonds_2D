@@ -15,16 +15,18 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField]
     private LayerMask enemyLayers;
 
+    [Header("Combo Settings")]
     [SerializeField]
-    private float attackRate = 1f;
+    private float attackRate = 2f;
+
+    [SerializeField]
+    private float comboResetTime = 1f;
 
     private PlayerControls controls;
-    private float nextAttackTime = 0f;
-    private int comboStep = 0; // 0 = idle, 1 = Attack1, 2 = Attack2, 3 = Attack3
-
-    private bool canCombo = false;
-    private int currentAttack = 0;
+    private int comboStep = 0;
+    private float lastAttackTime = 0f;
     private bool isAttacking = false;
+    private int pressCount = 0;
 
     void Awake()
     {
@@ -34,50 +36,75 @@ public class PlayerCombat : MonoBehaviour
     void OnEnable()
     {
         controls.Enable();
-        controls.Player.Attack.performed += Attack;
     }
 
     void OnDisable()
     {
-        controls.Player.Attack.performed -= Attack;
         controls.Disable();
     }
 
-    void Update() { }
+    private void Update()
+    {
+        // Reset combo if time since last attack too long
+        if (Time.time - lastAttackTime > comboResetTime)
+        {
+            // comboStep = 0;
+            // animator.SetInteger("ComboStep", 0);
+            pressCount = 0;
+        }
+    }
 
     public void Attack(InputAction.CallbackContext context)
     {
+        Debug.Log("Attack input received");
         if (context.performed)
         {
-            if (Time.time >= nextAttackTime)
+            Debug.Log("Performing attack");
+            lastAttackTime = Time.time;
+            pressCount++;
+            if (pressCount == 1)
             {
-                Debug.Log("Melee Attack");
-                Debug.Log($"Combo Step: {comboStep}, Can Combo: {canCombo}");
-
-                if (comboStep == 0)
-                {
-                    // Start first attack
-                    Debug.Log("First Attack");
-                    comboStep = 1;
-                    animator.SetInteger("AttackIndex", comboStep);
-                    animator.SetTrigger("Attack");
-                    DoAttackHit();
-                }
-                else if (canCombo && comboStep < 3)
-                {
-                    // Queue next attack
-                    Debug.Log("Combo Attack");
-                    Debug.Log($"Current Combo Step: {comboStep}");
-                    comboStep++;
-                    animator.SetInteger("AttackIndex", comboStep);
-                    animator.SetTrigger("Attack");
-                    DoAttackHit();
-                    canCombo = false;
-                }
-
-                nextAttackTime = Time.time + 1f / attackRate;
+                animator.SetBool("Attack1", true);
             }
+
+            pressCount = Mathf.Clamp(pressCount, 0, 3);
+
+            DoAttackHit();
         }
+    }
+
+    public void StopAttack1()
+    {
+        if (pressCount >= 2)
+        {
+            animator.SetBool("Attack2", true);
+        }
+        else
+        {
+            animator.SetBool("Attack1", false);
+            pressCount = 0;
+        }
+    }
+
+    public void StopAttack2()
+    {
+        if (pressCount >= 3)
+        {
+            animator.SetBool("Attack3", true);
+        }
+        else
+        {
+            animator.SetBool("Attack2", false);
+            pressCount = 0;
+        }
+    }
+
+    public void StopAttack3()
+    {
+        animator.SetBool("Attack1", false);
+        animator.SetBool("Attack2", false);
+        animator.SetBool("Attack3", false);
+        pressCount = 0;
     }
 
     private void DoAttackHit()
@@ -93,25 +120,27 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
+    // === These will be called by Animation Events ===
+    public void ComboAttackEnd()
+    {
+        Debug.Log("Combo attack ended");
+        isAttacking = false;
+    }
+
+    public void ResetCombo()
+    {
+        Debug.Log("Resetting combo");
+        comboStep = 0;
+        animator.SetInteger("ComboStep", 0);
+        // animator.ResetTrigger("Attack");
+        isAttacking = false;
+    }
+
     void OnDrawGizmosSelected()
     {
         if (attackPoint == null)
             return;
 
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
-    }
-
-    // --- Animation Event Functions ---
-    public void ComboWindow()
-    {
-        Debug.Log("Combo Window Opened");
-        canCombo = true;
-    }
-
-    public void EndCombo()
-    {
-        Debug.Log("Combo Ended");
-        canCombo = false;
-        comboStep = 0; // Reset after combo chain ends
     }
 }
