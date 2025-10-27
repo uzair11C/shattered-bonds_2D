@@ -22,10 +22,18 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField]
     private float comboResetTime = 1f;
 
+    [Header("Damage Settings")]
+    [SerializeField]
+    private int attack1Damage = 8;
+
+    [SerializeField]
+    private int attack2Damage = 10;
+
+    [SerializeField]
+    private int attack3Damage = 14;
+
     private PlayerControls controls;
-    private int comboStep = 0;
     private float lastAttackTime = 0f;
-    private bool isAttacking = false;
     private int pressCount = 0;
 
     void Awake()
@@ -48,8 +56,6 @@ public class PlayerCombat : MonoBehaviour
         // Reset combo if time since last attack too long
         if (Time.time - lastAttackTime > comboResetTime)
         {
-            // comboStep = 0;
-            // animator.SetInteger("ComboStep", 0);
             pressCount = 0;
         }
     }
@@ -94,6 +100,10 @@ public class PlayerCombat : MonoBehaviour
         }
         else
         {
+            if (animator.GetBool("Attack1") == true)
+            {
+                animator.SetBool("Attack1", false);
+            }
             animator.SetBool("Attack2", false);
             pressCount = 0;
         }
@@ -109,6 +119,20 @@ public class PlayerCombat : MonoBehaviour
 
     private void DoAttackHit()
     {
+        int damage = 0;
+        switch (pressCount)
+        {
+            case 1:
+                damage = attack1Damage;
+                break;
+            case 2:
+                damage = attack2Damage;
+                break;
+            case 3:
+                damage = attack3Damage;
+                break;
+        }
+
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(
             attackPoint.position,
             attackRange,
@@ -116,24 +140,8 @@ public class PlayerCombat : MonoBehaviour
         );
         foreach (var enemy in hitEnemies)
         {
-            Debug.Log($"Hit {enemy.name}");
+            Debug.Log($"Hit {enemy.name} for {damage} damage");
         }
-    }
-
-    // === These will be called by Animation Events ===
-    public void ComboAttackEnd()
-    {
-        Debug.Log("Combo attack ended");
-        isAttacking = false;
-    }
-
-    public void ResetCombo()
-    {
-        Debug.Log("Resetting combo");
-        comboStep = 0;
-        animator.SetInteger("ComboStep", 0);
-        // animator.ResetTrigger("Attack");
-        isAttacking = false;
     }
 
     void OnDrawGizmosSelected()
