@@ -62,10 +62,8 @@ public class PlayerCombat : MonoBehaviour
 
     public void Attack(InputAction.CallbackContext context)
     {
-        Debug.Log("Attack input received");
         if (context.performed)
         {
-            Debug.Log("Performing attack");
             lastAttackTime = Time.time;
             pressCount++;
             if (pressCount == 1)
@@ -141,6 +139,10 @@ public class PlayerCombat : MonoBehaviour
         foreach (var enemy in hitEnemies)
         {
             Debug.Log($"Hit {enemy.name} for {damage} damage");
+            if (enemy.TryGetComponent<EnemyHealth>(out var enemyHealth))
+            {
+                enemyHealth.TakeDamage(damage);
+            }
         }
     }
 
