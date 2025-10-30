@@ -3,14 +3,29 @@ using UnityEngine;
 public class EnemyHealth : MonoBehaviour
 {
     [SerializeField]
-    private float health = 100f;
+    private int maxHealth = 100;
 
-    public void TakeDamage(float amount)
+    [SerializeField]
+    private HealthBar healthBar;
+
+    private int currentHealth;
+
+    void Awake()
     {
-        health -= amount;
-        Debug.Log($"{gameObject.name} took {amount} damage! Remaining: {health}");
-        if (health <= 0)
+        currentHealth = maxHealth;
+        healthBar.SetMaxHealth(maxHealth);
+    }
+
+    public void TakeDamage(int amount)
+    {
+        currentHealth -= amount;
+        healthBar.SetHealth(currentHealth);
+
+        Debug.Log($"{gameObject.name} took {amount} damage! Remaining: {currentHealth}");
+        if (currentHealth <= 0)
         {
+            currentHealth = 0;
+            healthBar.SetHealth(currentHealth);
             Die();
         }
     }
