@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
 {
-    [Header("Detection")]
+    [Header("Detection:")]
     [SerializeField]
     private Vector2 detectionBoxSize = new Vector2(5f, 2f);
 
@@ -12,20 +12,20 @@ public class EnemyAI : MonoBehaviour
     [SerializeField]
     private LayerMask playerLayer;
 
-    [Header("Attack")]
+    [Header("Attack:")]
     [SerializeField]
-    private Vector2 attackBoxSize = new Vector2(1.5f, 1.5f);
+    private Vector2 attackBoxSize = new(1.5f, 1.5f); // Vector2 simplified
 
     [SerializeField]
-    private Vector2 attackBoxOffset = new Vector2(1f, 0f);
+    private Vector2 attackBoxOffset = new(1f, 0f); // Vector2 simplified
 
     [SerializeField]
-    private float attackCooldown = 1.5f;
+    private float attackCooldown = 1f;
 
     [SerializeField]
     private float moveSpeed = 2f;
 
-    [Header("Patrol Points")]
+    [Header("Patrol Points:")]
     [SerializeField]
     private Transform pointA;
 
@@ -35,11 +35,12 @@ public class EnemyAI : MonoBehaviour
     private Transform player;
     private Vector3 target;
     private float lastAttackTime;
-    private bool isChasing;
+    private Animator enemyAnimator;
 
     private void Start()
     {
         target = pointB.position;
+        enemyAnimator = GetComponent<Animator>();
     }
 
     private void Update()
@@ -66,7 +67,6 @@ public class EnemyAI : MonoBehaviour
 
     private void Patrol()
     {
-        isChasing = false;
         transform.position = Vector2.MoveTowards(
             transform.position,
             target,
@@ -82,8 +82,6 @@ public class EnemyAI : MonoBehaviour
 
     private void ChaseAndAttack()
     {
-        isChasing = true;
-
         // Flip toward player
         if (
             (player.position.x > transform.position.x && transform.localScale.x < 0)
@@ -110,7 +108,7 @@ public class EnemyAI : MonoBehaviour
             transform.position = Vector2.MoveTowards(
                 transform.position,
                 player.position,
-                moveSpeed * 1.5f * Time.deltaTime
+                moveSpeed * 1.7f * Time.deltaTime
             );
         }
     }
@@ -119,7 +117,7 @@ public class EnemyAI : MonoBehaviour
     {
         if (Time.time >= lastAttackTime + attackCooldown)
         {
-            Debug.Log($"{name} attacks {playerHealth.name}");
+            enemyAnimator.SetTrigger("AttackPlayer");
             lastAttackTime = Time.time;
             if (playerHealth != null)
                 playerHealth.TakeDamage(10f);
