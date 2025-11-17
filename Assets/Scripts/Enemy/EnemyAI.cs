@@ -2,30 +2,49 @@ using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
 {
-    [Header("Detection:")]
+    private enum EnemyState
+    {
+        Patrol,
+        Chase,
+        Attack,
+    }
+
+    private EnemyState currentState = EnemyState.Patrol;
+
+    [Header("Detection")]
     [SerializeField]
-    private Vector2 detectionBoxSize = new Vector2(5f, 2f);
+    private Vector2 detectionBoxSize = new(5f, 2f);
 
     [SerializeField]
-    private Vector2 detectionBoxOffset = new Vector2(2.5f, 0f);
+    private Vector2 detectionBoxOffset = new(2.5f, 0f);
 
     [SerializeField]
     private LayerMask playerLayer;
 
-    [Header("Attack:")]
+    [Header("Attack")]
     [SerializeField]
-    private Vector2 attackBoxSize = new(1.5f, 1.5f); // Vector2 simplified
+    private Vector2 attackBoxSize = new(1.5f, 1.5f);
 
     [SerializeField]
-    private Vector2 attackBoxOffset = new(1f, 0f); // Vector2 simplified
+    private Vector2 attackBoxOffset = new(1f, 0f);
 
     [SerializeField]
     private float attackCooldown = 1f;
 
+    [Header("Movement")]
     [SerializeField]
     private float moveSpeed = 2f;
 
-    [Header("Patrol Points:")]
+    [SerializeField]
+    private float chaseSpeedMultiplier = 1.7f;
+
+    [SerializeField]
+    private float flipThreshold = 0.3f;
+
+    [SerializeField]
+    private float verticalFlipBlock = 0.5f;
+
+    [Header("Patrol Points")]
     [SerializeField]
     private Transform pointA;
 
@@ -33,21 +52,41 @@ public class EnemyAI : MonoBehaviour
     private Transform pointB;
 
     private Transform player;
-    private Vector3 target;
+    private Vector3 patrolTarget;
     private float lastAttackTime;
-    private Animator enemyAnimator;
+    private Animator animator;
 
     private void Start()
     {
-        target = pointB.position;
-        enemyAnimator = GetComponent<Animator>();
+        animator = GetComponent<Animator>();
+        patrolTarget = pointB.position;
     }
 
     private void Update()
     {
-        // Step 1: Detect player
+        DetectPlayer();
+
+        switch (currentState)
+        {
+            case EnemyState.Patrol:
+                UpdatePatrol();
+                break;
+            case EnemyState.Chase:
+                UpdateChase();
+                break;
+            case EnemyState.Attack:
+                UpdateAttack();
+                break;
+        }
+    }
+
+    // ---------------------------------------------------------
+    //  DETECTION
+    // ---------------------------------------------------------
+    private void DetectPlayer()
+    {
         Collider2D hit = Physics2D.OverlapBox(
-            (Vector2)transform.position + detectionBoxOffset * Mathf.Sign(transform.localScale.x),
+            (Vector2)transform.position + GetFacingOffset(detectionBoxOffset),
             detectionBoxSize,
             0f,
             playerLayer
@@ -56,44 +95,49 @@ public class EnemyAI : MonoBehaviour
         if (hit)
         {
             player = hit.transform;
-            ChaseAndAttack();
+            if (currentState != EnemyState.Attack)
+                currentState = EnemyState.Chase;
         }
         else
         {
             player = null;
-            Patrol();
+            currentState = EnemyState.Patrol;
         }
     }
 
-    private void Patrol()
+    // ---------------------------------------------------------
+    // PATROL STATE
+    // ---------------------------------------------------------
+    private void UpdatePatrol()
     {
-        transform.position = Vector2.MoveTowards(
-            transform.position,
-            target,
-            moveSpeed * Time.deltaTime
-        );
+        FlipToward(patrolTarget.x);
 
-        if (Vector2.Distance(transform.position, target) < 0.1f)
-        {
-            target = target == pointA.position ? pointB.position : pointA.position;
-            Flip();
-        }
+        float patrolSpeed = moveSpeed * Time.deltaTime;
+
+        Debug.Log("Patrolling toward point at speed: " + patrolSpeed);
+
+        transform.position = Vector2.MoveTowards(transform.position, patrolTarget, patrolSpeed);
+
+        if (Vector2.Distance(transform.position, patrolTarget) < 0.1f)
+            patrolTarget = patrolTarget == pointA.position ? pointB.position : pointA.position;
     }
 
-    private void ChaseAndAttack()
+    // ---------------------------------------------------------
+    // CHASE STATE
+    // ---------------------------------------------------------
+    private void UpdateChase()
     {
-        // Flip toward player
-        if (
-            (player.position.x > transform.position.x && transform.localScale.x < 0)
-            || (player.position.x < transform.position.x && transform.localScale.x > 0)
-        )
+        if (player == null)
         {
-            Flip();
+            currentState = EnemyState.Patrol;
+            return;
         }
 
-        // Step 2: Check attack box
+        FlipToward(player.position.x);
+
+        // Check if player is in attack box
         Collider2D attackHit = Physics2D.OverlapBox(
-            (Vector2)transform.position + attackBoxOffset * Mathf.Sign(transform.localScale.x),
+            (Vector2)transform.position + GetFacingOffset(attackBoxOffset),
             attackBoxSize,
             0f,
             playerLayer
@@ -101,27 +145,84 @@ public class EnemyAI : MonoBehaviour
 
         if (attackHit)
         {
-            TryAttack(attackHit.GetComponent<PlayerHealth>());
+            currentState = EnemyState.Attack;
+            return;
         }
-        else
+
+        float chaseSpeed = moveSpeed * chaseSpeedMultiplier * Time.deltaTime;
+        Debug.Log("Chasing player at speed: " + chaseSpeed);
+        // Move toward player
+        transform.position = Vector2.MoveTowards(transform.position, player.position, chaseSpeed);
+    }
+
+    // ---------------------------------------------------------
+    // ATTACK STATE
+    // ---------------------------------------------------------
+    private void UpdateAttack()
+    {
+        if (player == null)
         {
-            transform.position = Vector2.MoveTowards(
-                transform.position,
-                player.position,
-                moveSpeed * 1.7f * Time.deltaTime
-            );
+            currentState = EnemyState.Patrol;
+            return;
         }
+
+        FlipToward(player.position.x);
+
+        // Still in attack range?
+        Collider2D hit = Physics2D.OverlapBox(
+            (Vector2)transform.position + GetFacingOffset(attackBoxOffset),
+            attackBoxSize,
+            0f,
+            playerLayer
+        );
+
+        if (hit == null)
+        {
+            currentState = EnemyState.Chase;
+            return;
+        }
+
+        // Try attacking
+        TryAttack(hit.GetComponent<PlayerHealth>());
     }
 
     private void TryAttack(PlayerHealth playerHealth)
     {
         if (Time.time >= lastAttackTime + attackCooldown)
         {
-            enemyAnimator.SetTrigger("AttackPlayer");
+            animator?.SetTrigger("AttackPlayer");
             lastAttackTime = Time.time;
+
             if (playerHealth != null)
-                playerHealth.TakeDamage(10f);
+                playerHealth.TakeDamage(10);
         }
+    }
+
+    // ---------------------------------------------------------
+    // HELPERS
+    // ---------------------------------------------------------
+    private Vector2 GetFacingOffset(Vector2 offset)
+    {
+        return new Vector2(offset.x * Mathf.Sign(transform.localScale.x), offset.y);
+    }
+
+    private void FlipToward(float targetX)
+    {
+        float xDiff = targetX - transform.position.x;
+
+        // Don't flip if player is above enemy (prevents flip-spam during jumps)
+        if (player != null && player.position.y > transform.position.y + verticalFlipBlock)
+            return;
+
+        // Don't flip for tiny micro alignments
+        if (Mathf.Abs(xDiff) < flipThreshold)
+            return;
+
+        bool shouldFlip =
+            (xDiff > 0 && transform.localScale.x < 0) || (xDiff < 0 && transform.localScale.x > 0);
+
+        if (shouldFlip)
+            Flip();
     }
 
     private void Flip()
@@ -135,13 +236,13 @@ public class EnemyAI : MonoBehaviour
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireCube(
-            (Vector2)transform.position + detectionBoxOffset * Mathf.Sign(transform.localScale.x),
+            (Vector2)transform.position + GetFacingOffset(detectionBoxOffset),
             detectionBoxSize
         );
 
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(
-            (Vector2)transform.position + attackBoxOffset * Mathf.Sign(transform.localScale.x),
+            (Vector2)transform.position + GetFacingOffset(attackBoxOffset),
             attackBoxSize
         );
     }

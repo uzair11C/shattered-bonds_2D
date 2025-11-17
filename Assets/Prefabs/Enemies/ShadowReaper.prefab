@@ -332,9 +332,9 @@ GameObject:
   - component: {fileID: 5276041316640683919}
   - component: {fileID: 1203078800497825155}
   - component: {fileID: 8635165375547952850}
+  - component: {fileID: 8007408378214537800}
   - component: {fileID: 8355467281824977673}
   - component: {fileID: 299877598256300063}
-  - component: {fileID: 8007408378214537800}
   m_Layer: 6
   m_Name: ShadowReaper
   m_TagString: Enemy
@@ -405,7 +405,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 4, y: 1.2709961}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -459,43 +459,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &8355467281824977673
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8157469571551502575}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 091004970c0de184aa548afd15a72002, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 100
-  healthBar: {fileID: 4586309283099139555}
---- !u!114 &299877598256300063
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8157469571551502575}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a57654b814d54d4478e522fcc415273f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  detectionBoxSize: {x: 10, y: 4.21}
-  detectionBoxOffset: {x: 3.47, y: 1.37}
-  playerLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  attackBoxSize: {x: 1.5, y: 1.5}
-  attackBoxOffset: {x: 0.75, y: 0.09}
-  attackCooldown: 1.5
-  moveSpeed: 2
-  pointA: {fileID: 0}
-  pointB: {fileID: 0}
 --- !u!70 &8007408378214537800
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -525,12 +488,52 @@ CapsuleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0.23697948, y: -0.040009618}
   m_Size: {x: 0.8921385, y: 1.2737687}
   m_Direction: 0
+--- !u!114 &8355467281824977673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8157469571551502575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 091004970c0de184aa548afd15a72002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  healthBar: {fileID: 4586309283099139555}
+--- !u!114 &299877598256300063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8157469571551502575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a57654b814d54d4478e522fcc415273f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionBoxSize: {x: 13.49, y: 4.21}
+  detectionBoxOffset: {x: 1.89, y: 1.37}
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  attackBoxSize: {x: 1.5, y: 1.5}
+  attackBoxOffset: {x: 1.6, y: 0.09}
+  attackCooldown: 1.5
+  moveSpeed: 2
+  chaseSpeedMultiplier: 1.7
+  flipThreshold: 0.3
+  verticalFlipBlock: 0.5
+  pointA: {fileID: 0}
+  pointB: {fileID: 0}
 --- !u!1 &9050050322060996997
 GameObject:
   m_ObjectHideFlags: 0
