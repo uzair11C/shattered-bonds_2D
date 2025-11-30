@@ -55,6 +55,7 @@ public class EnemyAI : MonoBehaviour
     private Vector3 patrolTarget;
     private float lastAttackTime;
     private Animator animator;
+    private bool hasDetectedPlayer = false;
 
     private void Start()
     {
@@ -95,13 +96,20 @@ public class EnemyAI : MonoBehaviour
         if (hit)
         {
             player = hit.transform;
+            hasDetectedPlayer = true;
+
             if (currentState != EnemyState.Attack)
                 currentState = EnemyState.Chase;
         }
         else
         {
-            player = null;
-            currentState = EnemyState.Patrol;
+            // If enemy has already seen the player once, do NOT forget him
+            if (!hasDetectedPlayer)
+            {
+                player = null;
+                currentState = EnemyState.Patrol;
+            }
+            // else: do nothing — stay in chase mode
         }
     }
 
@@ -127,7 +135,7 @@ public class EnemyAI : MonoBehaviour
     // ---------------------------------------------------------
     private void UpdateChase()
     {
-        if (player == null)
+        if (player == null && !hasDetectedPlayer)
         {
             currentState = EnemyState.Patrol;
             return;
@@ -152,7 +160,11 @@ public class EnemyAI : MonoBehaviour
         float chaseSpeed = moveSpeed * chaseSpeedMultiplier * Time.deltaTime;
         Debug.Log("Chasing player at speed: " + chaseSpeed);
         // Move toward player
-        transform.position = Vector2.MoveTowards(transform.position, player.position, chaseSpeed);
+        transform.position = Vector2.MoveTowards(
+            transform.position,
+            new Vector2(player.position.x, transform.position.y),
+            chaseSpeed
+        );
     }
 
     // ---------------------------------------------------------
@@ -183,18 +195,19 @@ public class EnemyAI : MonoBehaviour
         }
 
         // Try attacking
-        TryAttack(hit.GetComponent<PlayerHealth>());
+        // TryAttack(hit.GetComponent<HealthComponent>());
     }
 
-    private void TryAttack(PlayerHealth playerHealth)
+    private void TryAttack(HealthComponent playerHealth)
     {
         if (Time.time >= lastAttackTime + attackCooldown)
         {
-            animator?.SetTrigger("AttackPlayer");
+            if (animator != null)
+                animator.SetTrigger("AttackPlayer");
             lastAttackTime = Time.time;
 
-            if (playerHealth != null)
-                playerHealth.TakeDamage(10);
+            // if (playerHealth != null)
+            //     playerHealth.TakeDamage(10, playerHealth.GetComponent<Animator>());
         }
     }
 

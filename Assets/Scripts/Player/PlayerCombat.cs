@@ -139,9 +139,9 @@ public class PlayerCombat : MonoBehaviour
         foreach (var enemy in hitEnemies)
         {
             Debug.Log($"Hit {enemy.name} for {damage} damage");
-            if (enemy.TryGetComponent<EnemyHealth>(out var enemyHealth))
+            if (enemy.TryGetComponent<HealthComponent>(out var enemyHealth))
             {
-                enemyHealth.TakeDamage(damage);
+                enemyHealth.TakeDamage(damage, enemy.GetComponent<Animator>());
             }
         }
     }
