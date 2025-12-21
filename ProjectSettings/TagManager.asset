@@ -16,7 +16,7 @@ TagManager:
   - Enemy
   - Weapon
   - Ground
-  - 
+  - Background
   - 
   - 
   - 
@@ -42,4 +42,19 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: BackgroundBack
+    uniqueID: 206930021
+    locked: 0
+  - name: BackgroundMid
+    uniqueID: 3440792947
+    locked: 0
+  - name: BackgroundFront
+    uniqueID: 1483722135
+    locked: 0
+  - name: Ground
+    uniqueID: 3878563819
+    locked: 0
+  - name: Player
+    uniqueID: 77713549
     locked: 0
